@@ -1,3 +1,4 @@
+import pytest
 from analyser.parser import parse_source
 
 
@@ -29,3 +30,13 @@ def test_comment_only_source_is_parsed():
     tree = parse_source(source)
 
     assert tree is not None
+
+
+def test_invalid_python_source_raises_syntax_error():
+    source = """
+def calculate_total(value)
+    return value + 10
+"""
+
+    with pytest.raises(SyntaxError):
+        parse_source(source)

@@ -18,3 +18,14 @@ def test_empty_source_is_parsed():
     tree = parse_source(source)
 
     assert tree is not None
+    
+
+def test_comment_only_source_is_parsed():
+    source = """
+# This is a comment
+# Another comment
+"""
+
+    tree = parse_source(source)
+
+    assert tree is not None

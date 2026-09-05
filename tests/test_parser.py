@@ -1,5 +1,5 @@
 import pytest
-from analyser.parser import parse_source
+from analyser.parser import parse_file, parse_source
 
 
 def test_valid_python_source_is_parsed():
@@ -40,3 +40,11 @@ def calculate_total(value)
 
     with pytest.raises(SyntaxError):
         parse_source(source)
+
+
+def test_nonexistent_file_raises_file_not_found_error():
+    file_path = "does_not_exist.py"
+
+    with pytest.raises(FileNotFoundError):
+        parse_file(file_path)
+

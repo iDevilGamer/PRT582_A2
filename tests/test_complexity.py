@@ -29,3 +29,17 @@ def calculate_total(value):
 
     assert complexity == 2
 
+def test_nested_decisions_increase_complexity():
+    source = """
+def calculate_total(value):
+    if value > 0:
+        if value < 100:
+            return value + 10
+    return value
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+
+    assert complexity == 3

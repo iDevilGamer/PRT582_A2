@@ -98,3 +98,20 @@ def outer_function():
     unused_variables = find_unused_variables(tree)
 
     assert "inner_value" in unused_variables
+
+def test_used_variable_in_nested_function_is_not_reported():
+    source = """
+def outer():
+    value = 10
+
+    def inner():
+        return value
+
+    return inner
+"""
+
+    tree = parse_source(source)
+
+    result = find_unused_variables(tree)
+
+    assert "value" not in result

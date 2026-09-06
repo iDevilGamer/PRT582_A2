@@ -14,6 +14,10 @@ def find_naming_violations(tree):
                 if isinstance(target, ast.Name):
                     constant_names.add(target.id)
 
+    def add_violation(name):
+        if name not in violations:
+            violations.append(name)
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Name):
             if node.id.startswith("_"):
@@ -21,16 +25,17 @@ def find_naming_violations(tree):
 
             if node.id in constant_names:
                 if not re.fullmatch(r"[A-Z][A-Z0-9_]*", node.id):
-                    violations.append(node.id)
+                    add_violation(node.id)
+
             elif not re.fullmatch(r"[a-z_][a-z0-9_]*", node.id):
-                violations.append(node.id)
+                add_violation(node.id)
 
         elif isinstance(node, ast.ClassDef):
             if not re.fullmatch(r"[A-Z][a-zA-Z0-9]*", node.name):
-                violations.append(node.name)
+                add_violation(node.name)
 
         elif isinstance(node, ast.FunctionDef):
             if not re.fullmatch(r"[a-z_][a-z0-9_]*", node.name):
-                violations.append(node.name)
+                add_violation(node.name)
 
     return violations

@@ -1,4 +1,6 @@
+import ast
 import pytest
+
 from analyser.parser import parse_file, parse_source
 
 
@@ -48,3 +50,11 @@ def test_nonexistent_file_raises_file_not_found_error():
     with pytest.raises(FileNotFoundError):
         parse_file(file_path)
 
+def test_parse_file_reads_and_parses_python_file(tmp_path):
+    file_path = tmp_path / "example.py"
+    file_path.write_text("x = 10\n", encoding="utf-8")
+
+    tree = parse_file(file_path)
+
+    assert isinstance(tree, ast.Module)
+    assert len(tree.body) == 1

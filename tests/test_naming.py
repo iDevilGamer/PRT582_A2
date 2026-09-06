@@ -1,3 +1,5 @@
+import ast
+
 from analyser.parser import parse_source
 from analyser.naming import find_naming_violations
 
@@ -127,3 +129,11 @@ MAX_Retries = 3
     violations = find_naming_violations(tree)
 
     assert "MAX_Retries" in violations
+
+def test_underscore_variable_is_ignored():
+    source = "_private_value = 10"
+    tree = ast.parse(source)
+
+    violations = find_naming_violations(tree)
+
+    assert "_private_value" not in violations

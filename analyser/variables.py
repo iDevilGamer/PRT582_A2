@@ -9,6 +9,12 @@ def find_unused_variables(tree):
             assigned_variables = set()
             used_variables = set()
 
+            # Function parameters count as assigned variables,
+            # except underscore-prefixed parameters.
+            for argument in node.args.args:
+                if not argument.arg.startswith("_"):
+                    assigned_variables.add(argument.arg)
+
             for child in ast.walk(node):
                 if isinstance(child, ast.Name):
                     if isinstance(child.ctx, ast.Store):

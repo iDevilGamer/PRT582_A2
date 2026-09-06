@@ -3,6 +3,11 @@ import pytest
 from analyser.parser import parse_source
 from analyser.report import analyse_file, generate_report
 from analyser.parser import parse_file
+from analyser.complexity import calculate_complexity
+from analyser.variables import find_unused_variables
+from analyser.duplication import find_duplicate_lines
+from analyser.naming import find_naming_violations
+from analyser.metrics import calculate_metrics
 
 
 def test_report_contains_all_analysis_categories():
@@ -282,3 +287,83 @@ def calculate_total(value):
     assert isinstance(report["naming_violations"], list)
     assert isinstance(report["metrics"], dict)
     assert isinstance(report["locations"], dict)
+
+def test_analysis_components_can_be_used_independently():
+    source = """
+def calculate_total(value):
+    unused_value = 10
+    if value > 0:
+        return value
+    return 0
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+    unused_variables = find_unused_variables(tree)
+    duplicates = find_duplicate_lines(tree, source)
+    naming_violations = find_naming_violations(tree)
+    metrics = calculate_metrics(tree)
+
+    assert complexity == 2
+    assert "unused_value" in unused_variables
+    assert duplicates == []
+    assert naming_violations == []
+    assert metrics["function_count"] == 1
+
+
+def test_report_preserves_locations_for_multiple_unused_variables():
+    source = """
+def calculate_total(value):
+    first_unused = 10
+    second_unused = 20
+    return value
+"""
+
+    tree = parse_source(source)
+
+    report = generate_report(tree, source)
+
+    assert report["locations"]["unused_variables"]["first_unused"] == 3
+    assert report["locations"]["unused_variables"]["second_unused"] == 4
+
+def test_report_preserves_locations_for_multiple_duplicate_blocks():
+    source = """
+def calculate_total():
+    first = 10
+    first = 10
+    first = 10
+
+    second = 20
+    second = 20
+    second = 20
+
+    return first + second
+"""
+
+    tree = parse_source(source)
+
+    report = generate_report(tree, source)
+
+    assert report["locations"]["duplicates"]["    first = 10"] == 3
+    assert report["locations"]["duplicates"]["    second = 20"] == 7
+
+def test_analyse_file_accepts_python_source_file(tmp_path):
+    file_path = tmp_path / "example.py"
+
+    file_path.write_text(
+        """
+import math
+
+def calculate_area(radius):
+    return math.pi * radius ** 2
+""",
+        encoding="utf-8"
+    )
+
+    report = analyse_file(file_path)
+
+    assert report["complexity"] == 1
+    assert report["metrics"]["function_count"] == 1
+    assert report["metrics"]["import_count"] == 1
+    assert report["metrics"]["logical_loc"] == 3

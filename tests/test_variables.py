@@ -14,3 +14,17 @@ def calculate_total(value):
     unused_variables = find_unused_variables(tree)
 
     assert "tax" in unused_variables
+
+
+def test_used_variable_is_not_reported():
+    source = """
+def calculate_total(value):
+    tax = 10
+    return value + tax
+"""
+
+    tree = parse_source(source)
+
+    unused_variables = find_unused_variables(tree)
+
+    assert "tax" not in unused_variables

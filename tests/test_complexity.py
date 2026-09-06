@@ -43,3 +43,62 @@ def calculate_total(value):
     complexity = calculate_complexity(tree)
 
     assert complexity == 3
+    
+def test_and_operator_increases_complexity():
+    source = """
+def check_value(value):
+    if value > 0 and value < 100:
+        return True
+    return False
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+
+    assert complexity == 3
+
+def test_or_operator_increases_complexity():
+    source = """
+def check_value(value):
+    if value < 0 or value > 100:
+        return False
+    return True
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+
+    assert complexity == 3
+
+def test_except_handler_increases_complexity():
+    source = """
+def read_value(value):
+    try:
+        return int(value)
+    except ValueError:
+        return 0
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+
+    assert complexity == 2
+
+def test_elif_statement_increases_complexity():
+    source = """
+def check_value(value):
+    if value > 100:
+        return "high"
+    elif value > 50:
+        return "medium"
+    return "low"
+"""
+
+    tree = parse_source(source)
+
+    complexity = calculate_complexity(tree)
+
+    assert complexity == 3

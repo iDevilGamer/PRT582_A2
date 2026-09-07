@@ -45,36 +45,6 @@ The analyser currently provides the following analysis:
   - Displays analysis results and source-code locations.
   - Provides error messages for missing files and invalid Python syntax.
 
-## Project Structure
-
-PRT582_A2/
-├── analyser/
-│   ├── complexity.py
-│   ├── duplication.py
-│   ├── metrics.py
-│   ├── naming.py
-│   ├── parser.py
-│   ├── report.py
-│   └── variables.py
-│
-├── tests/
-│   ├── test_cli.py
-│   ├── test_complexity.py
-│   ├── test_duplication.py
-│   ├── test_metrics.py
-│   ├── test_naming.py
-│   ├── test_parser.py
-│   ├── test_report.py
-│   └── test_variables.py
-│
-├── comments.py
-├── empty.py
-├── example_test.py
-├── invalid.py
-├── main.py
-├── .gitignore
-└── README.md
-
 ## Requirements
 
 - Python 3.14 or compatible Python 3 version
